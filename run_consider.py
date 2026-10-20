@@ -113,6 +113,7 @@ def drop_forming(d: pd.DataFrame) -> pd.DataFrame:
 
 
 def drop_forming_weekly(w: pd.DataFrame) -> pd.DataFrame:
+    """Legacy helper; weekly gates keep forming bars."""
     if w is None or w.empty:
         return w
     now = ny_now()
@@ -124,6 +125,7 @@ def drop_forming_weekly(w: pd.DataFrame) -> pd.DataFrame:
 
 
 def drop_forming_monthly(m: pd.DataFrame) -> pd.DataFrame:
+    """Legacy helper; monthly gates keep forming bars."""
     if m is None or m.empty:
         return m
     now = ny_now()
@@ -404,8 +406,9 @@ def eval_consider(
         )
     gate("EMA9>50>200", ok_stack)
 
-    w = drop_forming_weekly(to_weekly(d))
-    m = drop_forming_monthly(to_monthly(d))
+    # Keep forming week/month bars (match TradingView current candle)
+    w = to_weekly(d)
+    m = to_monthly(d)
 
     gate("月MCD", bool(m is not None and not m.empty and chip_pc_ge_lc(m, MCD_N, MCD_SMA)))
     gate("月MCDX", bool(m is not None and not m.empty and chip_pc_ge_lc(m, MCDX_N, MCDX_SMA)))
